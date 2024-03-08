@@ -10,6 +10,7 @@
 
 using namespace std;
 // Prototipos de funciones
+void BorrarMatrices();
 void GenerarMatriz(int op);
 void IngresoMatriz();
 void SumaMatrices(double** p_mat1, double** p_mat2, int c1, int c2, int f1, int f2);
@@ -151,6 +152,18 @@ void SumaMatrices(double** p_mat1, double** p_mat2, int c1, int c2, int f1, int 
 
 void RestaMatrices(double** p_mat1, double** p_mat2, int c1, int c2, int f1, int f2) {}
 void MultiplicaciónMatrices(double** p_mat1, double** p_mat2, int c1, int c2, int f1, int f2) {}
+
+void BorrarMatrices(){
+    for (int i = 0; i < f1; i++) {
+    delete[] p_mat1[i];
+}
+delete[] p_mat1;
+
+for (int i = 0; i < f2; i++) {
+    delete[] p_mat2[i];
+}
+delete[] p_mat2;
+}
 
 void PedirPuntos() {
 
