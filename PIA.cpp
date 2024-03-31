@@ -17,6 +17,7 @@ void RestaMatrices(double** p_mat1, double** p_mat2, int c1, int c2, int f1, int
 void MultiplicaciónMatrices(double** p_mat1, double** p_mat2, int c1, int c2, int f1, int f2);
 void PedirPuntos();
 void MemoriaMatrizResultante(double**& p_resultado, int filas, int columnas);
+void MenuGraficas();
 
 // Declarar funciones globales
 double** p_mat1;
@@ -276,7 +277,9 @@ int main()
         cout << "1. Suma de matrices" << endl;
         cout << "2. Resta de matrices" << endl;
         cout << "3. Multiplicación de matrices" << endl;
-        cout << "4. Salir" << endl;
+        cout << "4. Operaciones diversas (Rotación, Traslación y Z perspectiva)<< endl;
+        cout << "5. Graficacion de Bresenham"<< endl;
+        cout << "6. Salir" << endl;
         cout << "Opción: ";
         cin >> op;
 
@@ -287,13 +290,19 @@ int main()
             IngresoMatriz();
             break;
         case 4:
+            PedirPuntos();
+            break;
+        case 5:
+            MenuGraficas();
+            break;
+        case 6:
             cout << "Saliendo del programa." << endl;
             break;
         default:
             cout << "Opción no válida. Por favor, elige una opción válida." << endl;
             break;
         }
-    } while (op != 4);
+    } while (op != 6);
 
     return 0;
 }
