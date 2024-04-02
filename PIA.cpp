@@ -9,14 +9,23 @@
 #include <cstdlib> // Para system("cls")
 
 using namespace std;
-// Prototipos de funciones
 
+struct punto3D {
+    double x;
+    double y;
+    double z;
+};
+
+// Prototipos de funciones
 void IngresoMatriz();
 void SumaMatrices(double** p_mat1, double** p_mat2, int c1, int c2, int f1, int f2);
 void RestaMatrices(double** p_mat1, double** p_mat2, int c1, int c2, int f1, int f2);
 void MultiplicaciónMatrices(double** p_mat1, double** p_mat2, int c1, int c2, int f1, int f2);
 void PedirPuntos();
-void MemoriaMatrizResultante(double**& p_resultado, int filas, int columnas);
+void MenuOpe(punto3D* puntos, int numpuntos);
+void operacionesTRSZprp(punto3D* puntos, int numpuntos, int opci);   
+void OperarMatrizTRS(punto3D* puntos, int numpuntos, double matrizope[4][4]);
+void MemoriaMatrizResultante(double**& p_resultado, int filas, int columnas); 
 void MenuGraficas();
 
 // Declarar funciones globales
@@ -25,8 +34,10 @@ double** p_mat2;
 int c1 = 0;
 int c2 = 0;
 int f1 = 0;
-int f2 = 0;
+int f2 = 0;  
 int op = 0;
+int opci = 0; 
+
 
 
 void IngresoMatriz() {
@@ -77,7 +88,7 @@ void IngresoMatriz() {
         RestaMatrices(p_mat1, p_mat2, c1, c2, f1, f2);
         break;
     case 3:
-        MultiplicaciónMatrices(p_mat1, p_mat2, c1, c2, f1, f2); 
+        MultiplicaciónMatrices(p_mat1, p_mat2, c1, c2, f1, f2);
         break;
     }
 
@@ -129,11 +140,11 @@ void SumaMatrices(double** p_mat1, double** p_mat2, int c1, int c2, int f1, int 
     cout << "En caso de querer volver presionar 1, en caso de querer salir presionar 2" << endl;
     int desci = 0;
     cin >> desci;
-    switch (desci){
+    switch (desci) {
     case 1:
         return;
         break;
-    case 2: 
+    case 2:
         exit(0);
         break;
     }
@@ -141,7 +152,7 @@ void SumaMatrices(double** p_mat1, double** p_mat2, int c1, int c2, int f1, int 
 
 
 void RestaMatrices(double** p_mat1, double** p_mat2, int c1, int c2, int f1, int f2) {
-    
+
     // Verificar si las matrices tienen dimensiones compatibles para la resta
     if (c1 != c2 || f1 != f2) {
         cout << "No se pueden restar matrices con dimensiones diferentes." << endl;
@@ -181,15 +192,14 @@ void RestaMatrices(double** p_mat1, double** p_mat2, int c1, int c2, int f1, int
     cin >> desci;
     switch (desci) {
     case 1:
-        return;
+       return;
         break;
     case 2:
-        exit(0);
         break;
     }
 }
 
-void MultiplicaciónMatrices(double** p_mat1, double** p_mat2, int c1, int c2, int f1, int f2) 
+void MultiplicaciónMatrices(double** p_mat1, double** p_mat2, int c1, int c2, int f1, int f2)
 {
     // Verificar si las matrices tienen dimensiones compatibles para la multiplicación
     if (c1 != f2) {
@@ -232,6 +242,7 @@ void MultiplicaciónMatrices(double** p_mat1, double** p_mat2, int c1, int c2, i
     cin >> desci;
     switch (desci) {
     case 1:
+        system("cls");
         return;
         break;
     case 2:
@@ -257,49 +268,214 @@ void MemoriaMatrizResultante(double**& p_resultado, int filas, int columnas) {
 }
 
 
-void PedirPuntos() {
+void PedirPuntos() { 
+    float npuntos = 0; 
+    do {
+        cout << "Favor de ingresar la cantidad de puntos a trabajar: ";
+        cin >> npuntos; 
+    } while (npuntos % 1 != 0); 
+    cout << endl;  
+    int numpuntos = npuntos;  
+    punto3D* puntos = new punto3D[numpuntos];    
+
+    //Leer puntos
+    for (int i = 0; i < numpuntos; i++) { 
+        cout << "Ingresa las coordenadas del punto (no uses comas o espacios, separalas danto 'enter') " << i + 1 << " (x, y, z): "; 
+        cin >> puntos[i].x >> puntos[i].y >> puntos[i].z; 
+    }
+
+    system("pause");
+    MenuOpe(puntos, numpuntos); 
+    delete[] puntos;  //liberando la memoria
+   
+}
+
+void MenuOpe(punto3D*puntos, int numpuntos) {
+    
+    cout << "¿Qué operación de gustaria realizar con los puntos dados?" << endl;
+    cout << "1. Rotación" << endl;
+    cout << "2. Traslación" << endl;
+    cout << "3. Escalación" << endl;
+    cout << "4. Operar varias veces" << endl;
+    cin >> opci; 
+   
+    do {
+        switch (opci) {
+        case 1: case 2: case 3:
+            operacionesTRSZprp(puntos, numpuntos);
+            break;
+        case 4:
+            OperarMucho(puntos, numpuntos);
+            break;
+        default:
+            cout << "Favor de elegir una opción valida" << endl;
+            system("cls");
+        }
+    } while (opci != 1 && opci != 2 && opci != 3 && opci != 4);  
+    system("cls");
+
+}
+void operacionesTRSZprp(punto3D* puntos, int numpuntos, int opci) {   
+    int tiporota = 0;
+    double angulo = 0;
+    double matrizope[4][4]{};
+    char tecla = 0; 
+
+    for (int i = 0; i < 4; i++) { //Matriz identidad
+        for (int j = 0; j < 4; j++) {
+            if (i == j) {
+                matrizope[i][j] = 1;   
+            }
+            else {
+                matrizope[i][j] = 0;  
+            }
+        }
+    }
+    punto3D* parametros = new punto3D;   
+
+    switch (opci)
+    {
+    case 1:
+        do{
+        system("cls");
+        cout << "---ROTACIÓN---" << endl;
+        cout << "Favor de ingresar su angulo:";
+        cin >> angulo;  
+        cout << endl;
+        cout << "Favor de ingresar tu tipo de rotación. Contamos con los siguientes";
+        cout << "1. Rotación por matriz de rotación" << endl;
+        cout << "2. Rotación paralela a un eje" << endl;
+        cout << "3. Rotación por cuaternios" << endl;
+        cout << "4. Rotación por matriz por matriz compuesta" << endl;
+        cin << tiporota;
+        cout << endl;
+
+        switch (tiporota) {
+        case 1:
+            cout << "Tu angulo a rotar es: " << angulo << ", y tu tipo de rotación es: " << tiporota << endl;
+            angulo = angulo * (M_PI / 180); //Angulo en radianes 
+            cout << "Ingresa cualquier tecla para continuar";
+            cin >> tecla; 
+            system("cls");
+            RotacionDeComponentes(); 
+            OperarMatrizTRS(puntos, numpuntos, matrizope);
+            break;
+
+        case 2:
+            cout << "Tu angulo a rotar es: " << angulo << ", y tu tipo de rotación es: " << tiporota << endl;
+            angulo = angulo * (M_PI / 180); //Angulo en radianes
+            cout << "Ingresa cualquier tecla para continuar";
+            cin >> tecla; 
+            system("cls");
+            RotacionParalela();
+            break;
+
+        case 3:
+            cout << "Tu angulo a rotar es: " << angulo << ", y tu tipo de rotación es: " << tiporota << endl;
+            angulo = angulo * (M_PI / 180); //Angulo en radianes
+            cout << "Ingresa cualquier tecla para continuar";
+            cin >> tecla;  
+            system("cls");
+            RotacionCuaternios();
+            break;
+
+        case 4:
+            cout << "Tu angulo a rotar es: " << angulo << ", y tu tipo de rotación es: " << tiporota << endl;
+            angulo = angulo * (M_PI / 180); //Angulo en radianes
+            cout << "Ingresa cualquier tecla para continuar";
+            cin >> tecla; 
+            system("cls");
+            RotacionCompuesta(); 
+            break;
+        default:
+            cout << "Parece que no ingresaste un tipo de rotación correcta. Favor de ingresar una rotación correcta. ";
+
+        }
+        } while (tiporota != 1 && tiporota != 2 && tiporota != 3 && tiporota != 4) 
+    break;
+    case 2:
+        TraslacionDeComponentes();  
+        OperarMatrizTRS(puntos, numpuntos, matrizope);  
+        break; 
+    case 3:
+        EscalacionDeComponentes(); 
+        OperarMatrizTRS(puntos, numpuntos, matrizope); 
+    }
+
+}
+void OperarMucho() {
+
+}
+void MenuGraficas() {
+}
+
+void RotacionDeComponentes() {
+
+}
+
+void RotacionParalela() {
+
+}
+
+void RotacionCuaternios() {
+
+}
+void RotacionCompuesta() {
+
+}
+
+void OperarMatrizTRS(punto3D* puntos, int numpuntos, double matrizope[4][4]) {
+
+}
+
+void TraslacionDeComponentes() {
+
+}
+
+void EscalacionDeComponentes() {
 
 }
 
 
 using namespace std;
-
-
-
 int main()
 {
 
     system("cls");
     cout << "Bienvenido a la calculadora de matrices, contamos con las siguientes opciones:" << endl;
-    cout << endl;
+    cout << endl; 
     do {
         cout << "Elige una opción:" << endl;
         cout << "1. Suma de matrices" << endl;
         cout << "2. Resta de matrices" << endl;
         cout << "3. Multiplicación de matrices" << endl;
-        cout << "4. Operaciones diversas (Rotación, Traslación y Z perspectiva)<< endl;
-        cout << "5. Graficacion de Bresenham"<< endl;
+        cout << "4. Operaciones diversas (Rotación, Traslación, Escalación, Zprp, Matrices Compuestas)"<< endl;
+        cout << "5. Graficacion de Bresenham" << endl;
         cout << "6. Salir" << endl;
         cout << "Opción: ";
-        cin >> op;
+        cin >> op;   
 
-        switch (op) {
+        switch (op) {  
         case 1:
         case 2:
         case 3:
             IngresoMatriz();
+            
             break;
         case 4:
             PedirPuntos();
+            
             break;
         case 5:
             MenuGraficas();
+           
             break;
         case 6:
             cout << "Saliendo del programa." << endl;
             break;
         default:
             cout << "Opción no válida. Por favor, elige una opción válida." << endl;
+            system("cls");  
             break;
         }
     } while (op != 6);
