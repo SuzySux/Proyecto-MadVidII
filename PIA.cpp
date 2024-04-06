@@ -25,6 +25,8 @@ void PedirPuntos();
 void MenuOpe(punto3D* puntos, int numpuntos);
 void operacionesTRSZprp(punto3D* puntos, int numpuntos, int opci);   
 void OperarMatrizTRS(punto3D* puntos, int numpuntos, double matrizope[4][4]);
+void TraslacionDeComponentes(punto3D* parametros, double matrizope[4][4]);
+void EscalacionDeComponentes(punto3D* parametros);
 void MemoriaMatrizResultante(double**& p_resultado, int filas, int columnas); 
 void MenuGraficas();
 
@@ -394,13 +396,15 @@ void operacionesTRSZprp(punto3D* puntos, int numpuntos, int opci) {
         } while (tiporota != 1 && tiporota != 2 && tiporota != 3 && tiporota != 4) 
     break;
     case 2:
-        TraslacionDeComponentes();  
-        OperarMatrizTRS(puntos, numpuntos, matrizope);  
-        break; 
+        TraslacionDeComponentes(parametros, matrizope);
+        OperarMatrizTRS(puntos, numpuntos, matrizope);
+        break;
     case 3:
-        EscalacionDeComponentes(); 
-        OperarMatrizTRS(puntos, numpuntos, matrizope); 
+        EscalacionDeComponentes(parametros);
+        OperarMatrizTRS(puntos, numpuntos, matrizope);
+        break;
     }
+  
 
 }
 void OperarMucho() {
@@ -428,12 +432,89 @@ void OperarMatrizTRS(punto3D* puntos, int numpuntos, double matrizope[4][4]) {
 
 }
 
-void TraslacionDeComponentes() {
+static void TraslacionDeComponentes(double matrizope[4][4], punto3D* parametros) {
+    double matriz[4][4]{}; 
+    double** matrizContenedor, ** matriz1, ** matriz2;
 
+    matrizContenedor = new double* [4];	matriz1 = new double* [4];	matriz2 = new double* [4]; 
+    for (int i = 0; i < 4; i++) { //Haciendo la matriz identidad
+        for (int j = 0; j < 4; j++) {
+            if (i == j) {
+                matriz[i][j] = 1;
+            }
+            else {
+                matriz[i][j] = 0;
+            }
+        }
+    }
+
+    cout << "Ingresa los componentes de traslacion (x, y, z): "; cin >> parametros->x >> parametros->y >> parametros->z;
+    matrizope[0][3] = parametros->x;
+    matrizope[1][3] = parametros->y;
+    matrizope[2][3] = parametros->z;
+
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            matriz2[i][j] = matriz[i][j];
+
+        }
+    }
+    cout << "Matriz guardada con exito";
+    //productoMatriz(matrizContenedor, identidad, matriz2, 4, 4, 4, 4);
+    delete[] matrizContenedor;
+    delete[] matriz1;
+    delete[] matriz2;
 }
 
-void EscalacionDeComponentes() {
 
+void EscalacionDeComponentes(punto3D* parametros) {
+    double matriz[4][4]{};
+    double** matrizContenedor,** matriz3, ** identidad;
+    matrizContenedor = new double* [4]; matriz3 = new double* [4]; identidad = new double* [4];
+
+    for (int i = 0; i < 4; i++) { //Haciendo la matriz identidad
+        for (int j = 0; j < 4; j++) {
+            if (i == j) {
+                matriz[i][j] = 1;
+            }
+            else {
+                matriz[i][j] = 0;
+            }
+        }
+    }
+
+    cout << "Ingresa los componentes de escalacion (x, y, z): "; cin >> parametros->x >> parametros->y >> parametros->z;
+    matriz[0][0] = parametros->x;
+    matriz[1][1] = parametros->y;
+    matriz[2][2] = parametros->z;
+
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            matriz3[i][j] = matriz[i][j];
+
+        }
+    }
+    //productoMatriz(matrizContenedor, identidad, matriz3, 4, 4, 4, 4);
+
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            identidad[i][j] = matrizContenedor[i][j];
+            matriz[i][j] = matrizContenedor[i][j];
+        }
+    }
+
+    cout << "Matriz guardada con exito";
+    //mostrarResultado(matrizContenedor, 4, 4);
+    //productoMatriz(matrizContenedor, identidad, matriz3, 4, 4, 4, 4);
+    delete[] matrizContenedor;
+    delete[] matriz3;
+    delete[] identidad;
 }
 
 
