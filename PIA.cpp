@@ -26,9 +26,9 @@ void MenuOpe(punto3D* puntos, int numpuntos);
 void operacionesTRSZprp(punto3D* puntos, int numpuntos, int opci);
 void OperarMatrizTRS(punto3D* puntos, int numpuntos, double matrizope[4][4]);
 void TraslacionDeComponentes(punto3D* parametros, double matrizope[4][4]);
-void EscalacionDeComponentes(punto3D* parametros);
+void EscalacionDeComponentes(double matrizope[4][4], punto3D* parametros);
 void MemoriaMatrizResultante(double**& p_resultado, int filas, int columnas);
-void MostrarNuevosPuntos(punto3D* puntos, int numpuntos); 
+void MostrarNuevosPuntos(punto3D* puntos, int numpuntos);
 void MenuGraficas();
 
 // Declarar funciones globales
@@ -272,7 +272,7 @@ void MemoriaMatrizResultante(double**& p_resultado, int filas, int columnas) {
 
 
 void PedirPuntos() {
-    float npuntos = 0;
+    int npuntos = 0;
     do {
         cout << "Favor de ingresar la cantidad de puntos a trabajar: ";
         cin >> npuntos;
@@ -305,10 +305,10 @@ void MenuOpe(punto3D* puntos, int numpuntos) {
     do {
         switch (opci) {
         case 1: case 2: case 3:
-            operacionesTRSZprp(puntos, numpuntos);
+            operacionesTRSZprp(puntos, numpuntos, opci);
             break;
         case 4:
-            OperarMucho(puntos, numpuntos);
+            OperarMucho();
             break;
         default:
             cout << "Favor de elegir una opción valida" << endl;
@@ -350,7 +350,7 @@ void operacionesTRSZprp(punto3D* puntos, int numpuntos, int opci) {
             cout << "2. Rotación paralela a un eje" << endl;
             cout << "3. Rotación por cuaternios" << endl;
             cout << "4. Rotación por matriz por matriz compuesta" << endl;
-            cin << tiporota;
+            cin >> tiporota;
             cout << endl;
 
             switch (tiporota) {
@@ -394,14 +394,14 @@ void operacionesTRSZprp(punto3D* puntos, int numpuntos, int opci) {
                 cout << "Parece que no ingresaste un tipo de rotación correcta. Favor de ingresar una rotación correcta. ";
 
             }
-        } while (tiporota != 1 && tiporota != 2 && tiporota != 3 && tiporota != 4)
+        } while (tiporota != 1 && tiporota != 2 && tiporota != 3 && tiporota != 4);
             break;
     case 2:
         TraslacionDeComponentes(parametros, matrizope);
         OperarMatrizTRS(puntos, numpuntos, matrizope);
         break;
     case 3:
-        EscalacionDeComponentes(parametros);
+        EscalacionDeComponentes(matrizope, parametros); 
         OperarMatrizTRS(puntos, numpuntos, matrizope);
         break;
     }
@@ -429,7 +429,7 @@ void RotacionCompuesta() {
 
 }
 
-static void TraslacionDeComponentes(double matrizope[4][4], punto3D* parametros) {
+void TraslacionDeComponentes(punto3D* parametros, double matrizope[4][4]){
     cout << "Ingresa los componentes de traslacion (x, y, z): ";
     cin >> parametros->x >> parametros->y >> parametros->z;
 
@@ -467,33 +467,33 @@ void OperarMatrizTRS(punto3D* puntos, int numpuntos, double matrizope[4][4]) {
     }
 
     // Llamar a la función para mostrar los nuevos puntos
-    MostrarNuevosPuntos(puntos, numpuntos); 
+    MostrarNuevosPuntos(puntos, numpuntos);
 }
 
 void MostrarNuevosPuntos(punto3D* puntos, int numpuntos) {
     cout << "Los puntos despues de la operacion ahora son: " << endl;
-    for (int i = 0; i < numpuntos; i++) 
+    for (int i = 0; i < numpuntos; i++)
     {
         cout << "Punto " << i + 1 << " :(" << puntos[i].x << ", " << puntos[i].y << ", " << puntos[i].z << ")" << endl;
     }
-    system("pause"); system("cls"); 
-    Zperp(puntos, numpuntos);  
+    system("pause"); system("cls");
+    Zperp(puntos, numpuntos);
 
-} 
+}
 
 void Zperp(punto3D* puntos, int numpuntos) {
     double zperp = 0;
     cout << "Favor de ingresar el valor de z" << endl;
     cout << "Tus puntos en z prp son:" << endl;
-    for (int i = 0; i < numpuntos; i++) 
+    for (int i = 0; i < numpuntos; i++)
     {
         double resultZperpX;
         double resultZperpY;
-        resultZperpX = puntos[i].x * (zperp / (zperp - puntos[i].z));  
-        resultZperpY = puntos[i].y * (zperp / (zperp - puntos[i].z)); 
+        resultZperpX = puntos[i].x * (zperp / (zperp - puntos[i].z));
+        resultZperpY = puntos[i].y * (zperp / (zperp - puntos[i].z));
 
         //cout << puntos[i].x << " " << puntos[i].y << " " << zprp << " " << resultadoZprpX << " " << resultadoZprpY << endl;
-        cout << "Punto: " << i + 1 << " :(" << resultZperpX << ", " << resultZperpY << ")" << endl;  
+        cout << "Punto: " << i + 1 << " :(" << resultZperpX << ", " << resultZperpY << ")" << endl;
     }
     system("pause");
 }
