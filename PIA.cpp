@@ -18,18 +18,27 @@ struct punto3D {
 
 // Prototipos de funciones
 void IngresoMatriz();
-void SumaMatrices(double** p_mat1, double** p_mat2, int c1, int c2, int f1, int f2);
-void RestaMatrices(double** p_mat1, double** p_mat2, int c1, int c2, int f1, int f2);
-void MultiplicaciónMatrices(double** p_mat1, double** p_mat2, int c1, int c2, int f1, int f2);
+void SumaMatrices(double**, double**, int, int, int, int);
+void RestaMatrices(double**, double**, int, int, int, int);
+void MultiplicaciónMatrices(double**, double**, int, int, int, int);
 void PedirPuntos();
-void MenuOpe(punto3D* puntos, int numpuntos);
-void operacionesTRSZprp(punto3D* puntos, int numpuntos, int opci);
-void OperarMatrizTRS(punto3D* puntos, int numpuntos, double matrizope[4][4]);
-void TraslacionDeComponentes(punto3D* parametros, double matrizope[4][4]);
-void EscalacionDeComponentes(double matrizope[4][4], punto3D* parametros);
-void MemoriaMatrizResultante(double**& p_resultado, int filas, int columnas);
-void MostrarNuevosPuntos(punto3D* puntos, int numpuntos);
+void MenuOpe(punto3D*, int);
+void operacionesTRSZprp(punto3D*, int, int);
+void OperarMatrizTRS(punto3D*, int, double[4][4]);
+void TraslacionDeComponentes(punto3D*, double[4][4]);
+void EscalacionDeComponentes(double[4][4], punto3D*);
+void Zperp(punto3D*, int);
+void MemoriaMatrizResultante(double**&, int, int);
+void MostrarNuevosPuntos(punto3D*, int);
+void RotacionParalela(double, int, punto3D*, double[4][4]);
+void RotacionDeComponentes();
+void RotacionCuaternios();
+void RotacionCompuesta();
+void OperarMucho();
 void MenuGraficas();
+void RectaGraf();
+void CircuGraf();
+void ElipseGraf();
 
 // Declarar funciones globales
 double** p_mat1;
@@ -153,7 +162,6 @@ void SumaMatrices(double** p_mat1, double** p_mat2, int c1, int c2, int f1, int 
     }
 }
 
-
 void RestaMatrices(double** p_mat1, double** p_mat2, int c1, int c2, int f1, int f2) {
 
     // Verificar si las matrices tienen dimensiones compatibles para la resta
@@ -270,7 +278,6 @@ void MemoriaMatrizResultante(double**& p_resultado, int filas, int columnas) {
     }
 }
 
-
 void PedirPuntos() {
     int npuntos = 0;
     do {
@@ -318,6 +325,7 @@ void MenuOpe(punto3D* puntos, int numpuntos) {
     system("cls");
 
 }
+
 void operacionesTRSZprp(punto3D* puntos, int numpuntos, int opci) {
     int tiporota = 0;
     double angulo = 0;
@@ -370,7 +378,7 @@ void operacionesTRSZprp(punto3D* puntos, int numpuntos, int opci) {
                 cout << "Ingresa cualquier tecla para continuar";
                 cin >> tecla;
                 system("cls");
-                RotacionParalela();
+                RotacionParalela(angulo, numpuntos, puntos, matrizope);
                 break;
 
             case 3:
@@ -395,44 +403,90 @@ void operacionesTRSZprp(punto3D* puntos, int numpuntos, int opci) {
 
             }
         } while (tiporota != 1 && tiporota != 2 && tiporota != 3 && tiporota != 4);
-            break;
+        break;
     case 2:
         TraslacionDeComponentes(parametros, matrizope);
         OperarMatrizTRS(puntos, numpuntos, matrizope);
         break;
     case 3:
-        EscalacionDeComponentes(matrizope, parametros); 
+        EscalacionDeComponentes(matrizope, parametros);
         OperarMatrizTRS(puntos, numpuntos, matrizope);
         break;
     }
 
 
 }
+
+
 void OperarMucho() {
 
 }
-void MenuGraficas() {
+
+
+void RotacionParalela(double angulo, int numpuntos, punto3D* puntos, double matrizope[4][4]) {
+    bool unEje = false;
+    char eje = '0';
+    punto3D* vector = new punto3D[3]; // Creating an array of vectors
+
+    // Asking for user input until a valid axis is selected
+    do {
+        cout << "Ingrese el primer vector (x,y,z): ";
+        cin >> vector[0].x >> vector[0].y >> vector[0].z;
+        cout << "Ingrese el segundo vector (x,y,z): ";
+        cin >> vector[1].x >> vector[1].y >> vector[1].z;
+
+        // Calculating the direction vector
+        vector[2].x = vector[1].x - vector[0].x;
+        vector[2].y = vector[1].y - vector[0].y;
+        vector[2].z = vector[1].z - vector[0].z;
+
+        // Checking if the direction vector is parallel to any axis
+        if ((vector[2].x == 0 && vector[2].y == 0) ||
+            (vector[2].x == 0 && vector[2].z == 0) ||
+            (vector[2].y == 0 && vector[2].z == 0)) {
+            unEje = true;
+        }
+        else {
+            cout << "No se puede operar si no es en un eje" << endl;
+        }
+
+    } while (!unEje);
+
+    // Determining the axis of rotation based on the direction vector
+    if (vector[2].x != 0) {
+        eje = 'x';
+    }
+    else if (vector[2].y != 0) {
+        eje = 'y';
+    }
+    else if (vector[2].z != 0) {
+        eje = 'z';
+    }
+
+    cout << "Eje en que se va a rotar: " << eje << endl;
+    // Assuming the rest of the code involves the rotation operation using the provided axis and angle
+    // You can now continue adapting the code to perform the rotation operation.
+
+    // Don't forget to deallocate dynamically allocated memory
+    delete[] vector;
 }
+
 
 void RotacionDeComponentes() {
-
-}
-
-void RotacionParalela() {
 
 }
 
 void RotacionCuaternios() {
 
 }
+
 void RotacionCompuesta() {
 
 }
 
-void TraslacionDeComponentes(punto3D* parametros, double matrizope[4][4]){
+void TraslacionDeComponentes(punto3D* parametros, double matrizope[4][4]) {
     cout << "Ingresa los componentes de traslacion (x, y, z): ";
     cin >> parametros->x >> parametros->y >> parametros->z;
-
     matrizope[0][3] = parametros->x;
     matrizope[1][3] = parametros->y;
     matrizope[2][3] = parametros->z;
@@ -496,6 +550,42 @@ void Zperp(punto3D* puntos, int numpuntos) {
         cout << "Punto: " << i + 1 << " :(" << resultZperpX << ", " << resultZperpY << ")" << endl;
     }
     system("pause");
+}
+
+void MenuGraficas() {
+    cout << "¿Qué tipo de graficación necesitas? Elige el número del tipo solicitado." << endl;
+    cout << endl;
+    cout << "1. Recta" << endl;
+    cout << "2. Circuferencia" << endl; 
+    cout << "3. Elipse" << endl; 
+    cout << endl; 
+    int tipograf;
+    cout << "Graficación a usar: "; cin >> tipograf;
+    switch (tipograf) 
+    {
+    case 1:
+        RectaGraf();
+        break;
+    case 2:
+        CircuGraf();
+        break;
+    case 3:
+        ElipseGraf();
+        break;
+    }
+    
+}
+
+void RectaGraf() {
+
+}
+
+void CircuGraf() {
+
+}
+
+void ElipseGraf() {
+
 }
 
 using namespace std;
