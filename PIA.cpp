@@ -577,15 +577,142 @@ void MenuGraficas() {
 }
 
 void RectaGraf() {
-
+    system("cls");
+    int x1, y1, x2, y2;
+    cout << "Ingresa el punto de inicio (x, y): ";
+    cin >> x1 >> y1;
+    cout << "Ingresa el punto final (x, y): ";
+    cin >> x2 >> y2;
+    int dx = abs(x2 - x1);
+    int dy = abs(y2 - y1);
+    int stepX = (x2 > x1) ? 1 : -1;
+    int stepY = (y2 > y1) ? 1 : -1;
+    int err = dx - dy;
+    int x = x1;
+    int y = y1;
+    cout << "Mostrando puntos:" << endl;
+    cout << "( " << x << ", " << y << " )" << endl;
+    while (x != x2 || y != y2) {
+        int e2 = 2 * err;
+        if (e2 > -dy) {
+            err -= dy;
+            x += stepX;
+        }
+        if (e2 < dx) {
+            err += dx;
+            y += stepY;
+        }
+        cout << "( " << x << ", " << y << " )" << endl;
+    }
+    system("pause");
+    system("cls");
 }
 
 void CircuGraf() {
-
+    system("cls");
+    int radius = 0, center_x = 0, center_y = 0;
+    cout << "Ingrese el radio: ";
+    cin >> radius;
+    cout << "Ingrese las coordenadas del centro (xc, yc): ";
+    cin >> center_x >> center_y;
+    int pk0 = 1 - radius;
+    int xk[50] = { 0 }, yk[50] = { 0 }, pk[50] = { 0 };
+    int indexFinal = 0;
+    int prev_x = 0, prev_y = radius, prev_pk = pk0;
+    for (int i = 0; i < 50; i++) {
+        if (i == 0) {
+            xk[i] = 0;
+            yk[i] = radius;
+            pk[i] = pk0;
+        }
+        else {
+            if (prev_pk < 0) {
+                pk[i] = prev_pk + 2 * (prev_x)+3;
+                prev_x++;
+                xk[i] = prev_x;
+                yk[i] = prev_y;
+            }
+            else if (prev_pk >= 0) {
+                pk[i] = prev_pk + 2 * (prev_x)+3 - (2 * (prev_y)-2);
+                prev_x++;
+                prev_y--;
+                xk[i] = prev_x;
+                yk[i] = prev_y;
+            }
+        }
+        if (xk[i] >= yk[i]) {
+            indexFinal = i;
+            break;
+        }
+        prev_x = xk[i];
+        prev_y = yk[i];
+        prev_pk = pk[i];
+    }
+    cout << "Mostrando resultados" << endl;
+    int j = 0;
+    for (int i = 0; i <= 2 * (indexFinal); i++) {
+        if (i > indexFinal) {
+            j++;
+            xk[i] = yk[(indexFinal - j)];
+            yk[i] = xk[(indexFinal - j)];
+        }
+        cout << "( " << xk[i] << ", " << yk[i] << " ) \t ( " << xk[i] + center_x << ", " << yk[i] + center_y << " )" << endl;
+    }
+    system("pause");
+    system("cls");
 }
 
 void ElipseGraf() {
-
+    system("cls");
+    int radius_x = 0, radius_y = 0, center_x = 0, center_y = 0;
+    cout << "Ingrese el radio de x: ";
+    cin >> radius_x;
+    cout << "Ingrese el radio de y: ";
+    cin >> radius_y;
+    cout << "Ingrese las coordenadas del centro ( xc, yc ): ";
+    cin >> center_x >> center_y;
+    int pk0 = (radius_y * radius_y) - (radius_x * radius_x) * (radius_y)+((radius_x * radius_x) / 4);
+    int xk[100] = { 0 }, yk[100] = { 0 }, pk[100] = { 0 };
+    int prev_x = 0, prev_y = 0, prev_pk = 0;
+    prev_y = radius_y;
+    prev_pk = pk0;
+    for (int i = 0; i < 100; i++) {
+        if (i == 0) {
+            pk[i] = pk0;
+            xk[i] = prev_x;
+            yk[i] = prev_y;
+        }
+        else {
+            if (prev_pk < 0) { // ( xk + 1, yk )
+                pk[i] = prev_pk + (2 * (radius_y * radius_y) * prev_x + 2 * (radius_y * radius_y)) + (radius_y * radius_y);
+                prev_x++;
+                xk[i] = prev_x;
+                yk[i] = prev_y;
+            }
+            else if (prev_pk >= 0) { // ( xk + 1, yk - 1 )
+                pk[i] = prev_pk + (2 * (radius_y * radius_y) * prev_x + 2 * (radius_y * radius_y)) - (2 * (radius_x * radius_x) * prev_y - 2 * (radius_x * radius_x)) + (radius_y * radius_y);
+                prev_x++;
+                prev_y--;
+                xk[i] = prev_x;
+                yk[i] = prev_y;
+            }
+        }
+        int two_ry2x = 2 * (radius_y * radius_y) * xk[i];
+        int two_rx2y = 2 * (radius_x * radius_x) * yk[i];
+        prev_x = xk[i];
+        prev_y = yk[i];
+        prev_pk = pk[i];
+        if (two_ry2x >= two_rx2y) {
+            break;
+        }
+    }
+    cout << "Mostrando resultados" << endl;
+    for (int i = 0; i < 100; i++) {
+        if (yk[i] == 0) break;
+        cout << "( " << xk[i] << ", " << yk[i] << " ) \t ( " << xk[i] + center_x << ", " << yk[i] + center_y << " )" << endl;
+    }
+    system("pause");
+    system("cls");
 }
 
 using namespace std;
